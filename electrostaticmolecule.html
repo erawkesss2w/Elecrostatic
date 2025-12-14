@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<title>ESP Molecule Finder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  font-family:sans-serif;
+  background:#0f172a;
+  color:#e5e7eb;
+  direction:rtl;
+  padding:20px;
+}
+.box{
+  max-width:480px;
+  margin:auto;
+  background:#111827;
+  padding:20px;
+  border-radius:14px;
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
+}
+input{background:#1f2937;color:#fff;}
+button{background:#2563eb;color:#fff;cursor:pointer;}
+.result{
+  margin-top:20px;
+  background:#020617;
+  padding:15px;
+  border-radius:12px;
+  text-align:center;
+}
+img{
+  max-width:100%;
+  border-radius:10px;
+  margin-top:10px;
+}
+a{color:#38bdf8;font-weight:bold;display:block;margin-top:10px;}
+.small{font-size:13px;opacity:.8;margin-top:8px;}
+</style>
+</head>
+
+<body>
+<div class="box">
+<h3>🔬 جستجوی نقشه الکترواستاتیکی مولکول</h3>
+
+<input id="mol" placeholder="مثلاً: Water">
+<button onclick="search()">جستجو</button>
+
+<div id="out" class="result" style="display:none"></div>
+</div>
+
+<script>
+function search(){
+  const m=document.getElementById("mol").value.trim();
+  if(!m){alert("نام مولکول را وارد کنید");return;}
+
+  // لینک جستجوی کامل
+  const query = encodeURIComponent(
+    m + " electrostatic potential map molecule"
+  );
+  const ddg =
+  "https://duckduckgo.com/?q=" + query + "&iax=images&ia=images";
+
+  // تصویر نمایشی (Wikipedia thumbnail)
+  const thumb =
+  "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+  encodeURIComponent(m);
+
+  const out=document.getElementById("out");
+  out.style.display="block";
+  out.innerHTML = 
+  🔍 نتیجه برای: <b>${m}</b><br>
+  <img id="img" src="" alt="preview">
+  <a href="${ddg}" target="_blank">مشاهده تصاویر علمی واقعی</a>
+  <div class="small">
+  تصویر فقط پیش‌نمایش است — نتایج واقعی در لینک بالا
+  </div>
+  ;
+
+  // گرفتن تصویر از ویکی‌پدیا
+  fetch(thumb)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.thumbnail){
+        document.getElementById("img").src=d.thumbnail.source;
+      }else{
+        document.getElementById("img").style.display="none";
+      }
+    })
+    .catch(()=>document.getElementById("img").style.display="none");
+}
+</script>
+</body>
+</html>
